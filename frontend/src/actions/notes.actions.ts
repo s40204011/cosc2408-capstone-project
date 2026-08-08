@@ -19,7 +19,7 @@ export async function createNoteAction(data: NoteInput) {
     const now = new Date().toISOString()
 
     await db.collection('notes').add({
-      userId,
+      uid: userId,
       title: data.title,
       content: data.content || '',
       createdAt: now,
