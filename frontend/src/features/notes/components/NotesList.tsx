@@ -19,7 +19,7 @@ export function NotesList() {
       {notes.map((note) => (
         <li key={note.id} className="rounded-lg border p-4">
           <h3 className="font-medium">{note.title}</h3>
-          <p className="text-sm text-zinc-500">{note.body}</p>
+          <p className="text-sm text-zinc-500">{note.content || note.body}</p>
         </li>
       ))}
     </ul>

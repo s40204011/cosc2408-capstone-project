@@ -1,39 +1,28 @@
-import type { Timestamp } from 'firebase/firestore'
-import type { Note, UserProfile } from '@/types/firestore'
+import { collection, doc, Timestamp, type CollectionReference, type DocumentData } from 'firebase/firestore'
+import { getClientDb } from '@/lib/firebase/client'
+import type { Note, UserProfile } from '@/types/notes.types'
 
-
-
+export type { UserProfile, Note }
 /**
- * Firestore collection type definitions.
- *
- * Keep in sync with:
- *   - src/lib/firebase/firestore.ts  (typed collection exports)
- *   - firebase/firestore.rules       (security rules)
- *   - docs/FIRESTORE-SCHEMA.md       (schema documentation)
- *
- * When adding a new collection, use the /firebase-collection skill.
+ * Creates a typed Firestore collection reference.
+ * Use this factory to add new collections — see docs/FIRESTORE-SCHEMA.md
  */
-
-export interface UserProfile {
-  uid: string
-  email: string
-  displayName: string | null
-  photoURL: string | null
-  role: 'user'
-  createdAt: Timestamp
-  updatedAt: Timestamp
-  _schemaVersion: 1
+function typedCollection<T extends DocumentData>(path: string): CollectionReference<T> {
+  return collection(getClientDb(), path) as CollectionReference<T>
 }
 
-export type CreateUserProfileInput = Omit<UserProfile, 'createdAt' | 'updatedAt'>
-export interface Note {
-  id: string
-  uid: string // owner's user id — used by security rules
-  title: string
-  body: string
-  createdAt: Timestamp
-  updatedAt: Timestamp
-  _schemaVersion: 1
+// ── Collections ──────────────────────────────────────────────────────────────
+// Add one export per Firestore collection. Keep in sync with:
+//   - src/types/firestore.ts
+//   - firebase/firestore.rules
+//   - docs/FIRESTORE-SCHEMA.md
+
+export function getUsersCollection() {
+  return typedCollection<DocumentData>('users')
+}
+
+export function userDoc(uid: string) {
+  return doc(getUsersCollection(), uid)
 }
 
 export function getNotesCollection() {
